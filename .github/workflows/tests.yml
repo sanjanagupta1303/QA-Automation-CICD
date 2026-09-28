@@ -27,7 +27,8 @@ jobs:
           pip install pytest
           pip install selenium
           pip install pytest-html
+          pip install requests
 
       - name: Run tests
         run: |
-          pytest tests/test_basic.py tests/test_api.py -v
+          pytest tests/test_basic.py tests/test_api.py tests/test_sauce_demo.py -v
