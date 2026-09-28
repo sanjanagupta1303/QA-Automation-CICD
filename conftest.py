@@ -1,36 +1,27 @@
-import os
 import pytest
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 @pytest.fixture
-def browser(request):
+def browser():
 
-    driver = webdriver.Chrome()
+    options = Options()
+
+    # Run Chrome without opening a browser window
+    options.add_argument("--headless")
+
+    # Required for GitHub Actions/Linux
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    # Set browser window size
+    options.add_argument("--window-size=1920,1080")
+
+    # Create Chrome WebDriver
+    driver = webdriver.Chrome(options=options)
 
     yield driver
 
-    # Take screenshot if test failed
-    if request.node.rep_call.failed:
-        os.makedirs("screenshots", exist_ok=True)
-
-        screenshot_path = os.path.join(
-            "screenshots",
-            f"{request.node.name}.png"
-        )
-
-        driver.save_screenshot(screenshot_path)
-
-        print(f"\nScreenshot saved: {screenshot_path}")
-
+    # Close browser after each test
     driver.quit()
-
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-
-    outcome = yield
-
-    rep = outcome.get_result()
-
-    setattr(item, "rep_" + rep.when, rep)

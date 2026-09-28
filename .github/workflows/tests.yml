@@ -30,3 +30,7 @@ jobs:
       - name: Run basic and API tests
         run: |
           pytest tests/test_basic.py tests/test_api.py -v
+
+      - name: Run Selenium SauceDemo tests
+        run: |
+          pytest tests/test_sauce_demo.py -v

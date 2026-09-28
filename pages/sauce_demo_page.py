@@ -30,15 +30,21 @@ class SauceDemoPage:
     POSTAL_CODE = (By.ID, "postal-code")
     CONTINUE_BUTTON = (By.ID, "continue")
     FINISH_BUTTON = (By.ID, "finish")
-    ORDER_CONFIRMATION = (By.CLASS_NAME, "complete-header")
+
+    # Order confirmation
+    ORDER_CONFIRMATION = (
+        By.CSS_SELECTOR,
+        "[data-test='complete-header']"
+    )
 
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
+    # ---------------- LOGIN ----------------
+
     def open(self):
         logger.info("Opening SauceDemo")
-
         self.driver.get(self.URL)
 
     def login(self, username, password):
@@ -64,7 +70,9 @@ class SauceDemoPage:
         logger.info("Checking Products page title")
 
         return self.wait.until(
-            EC.visibility_of_element_located(self.PRODUCTS_TITLE)
+            EC.visibility_of_element_located(
+                self.PRODUCTS_TITLE
+            )
         ).text
 
     def get_error_message(self):
@@ -72,15 +80,21 @@ class SauceDemoPage:
         logger.info("Checking login error message")
 
         return self.wait.until(
-            EC.visibility_of_element_located(self.ERROR_MESSAGE)
+            EC.visibility_of_element_located(
+                self.ERROR_MESSAGE
+            )
         ).text
+
+    # ---------------- CART ----------------
 
     def add_backpack_to_cart(self):
 
         logger.info("Adding Sauce Labs Backpack to cart")
 
         self.wait.until(
-            EC.element_to_be_clickable(self.ADD_BACKPACK)
+            EC.element_to_be_clickable(
+                self.ADD_BACKPACK
+            )
         ).click()
 
         logger.info("Backpack added to cart")
@@ -90,7 +104,9 @@ class SauceDemoPage:
         logger.info("Opening shopping cart")
 
         self.wait.until(
-            EC.element_to_be_clickable(self.CART_LINK)
+            EC.element_to_be_clickable(
+                self.CART_LINK
+            )
         ).click()
 
         logger.info("Shopping cart opened")
@@ -100,16 +116,38 @@ class SauceDemoPage:
         logger.info("Checking cart item")
 
         return self.wait.until(
-            EC.visibility_of_element_located(self.CART_ITEM)
+            EC.visibility_of_element_located(
+                self.CART_ITEM
+            )
         ).text
+
+    # ---------------- CHECKOUT ----------------
 
     def click_checkout(self):
 
         logger.info("Starting checkout")
 
+        checkout_button = self.wait.until(
+            EC.presence_of_element_located(
+                self.CHECKOUT_BUTTON
+            )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            checkout_button
+        )
+
         self.wait.until(
-            EC.element_to_be_clickable(self.CHECKOUT_BUTTON)
-        ).click()
+            EC.element_to_be_clickable(
+                self.CHECKOUT_BUTTON
+            )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].click();",
+            checkout_button
+        )
 
         logger.info("Checkout page opened")
 
@@ -123,7 +161,9 @@ class SauceDemoPage:
         logger.info("Entering customer details")
 
         self.wait.until(
-            EC.visibility_of_element_located(self.FIRST_NAME)
+            EC.visibility_of_element_located(
+                self.FIRST_NAME
+            )
         ).send_keys(first_name)
 
         self.driver.find_element(
@@ -141,7 +181,9 @@ class SauceDemoPage:
         logger.info("Continuing to order overview")
 
         self.wait.until(
-            EC.element_to_be_clickable(self.CONTINUE_BUTTON)
+            EC.element_to_be_clickable(
+                self.CONTINUE_BUTTON
+            )
         ).click()
 
         logger.info("Order overview displayed")
@@ -150,9 +192,27 @@ class SauceDemoPage:
 
         logger.info("Finishing order")
 
+        finish_button = self.wait.until(
+            EC.presence_of_element_located(
+                self.FINISH_BUTTON
+            )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});",
+            finish_button
+        )
+
         self.wait.until(
-            EC.element_to_be_clickable(self.FINISH_BUTTON)
-        ).click()
+            EC.element_to_be_clickable(
+                self.FINISH_BUTTON
+            )
+        )
+
+        self.driver.execute_script(
+            "arguments[0].click();",
+            finish_button
+        )
 
         logger.info("Order completed")
 
@@ -161,5 +221,7 @@ class SauceDemoPage:
         logger.info("Checking order confirmation")
 
         return self.wait.until(
-            EC.visibility_of_element_located(self.ORDER_CONFIRMATION)
+            EC.visibility_of_element_located(
+                self.ORDER_CONFIRMATION
+            )
         ).text
